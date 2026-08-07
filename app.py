@@ -59,3 +59,38 @@ def home():
         "index.html",
         accuracy=round(accuracy * 100, 2)
     )
+    # ==========================
+# Predict Route
+# ==========================
+
+@app.route("/predict", methods=["POST"])
+def predict():
+
+    uploaded_file = request.files["file"]
+
+    if uploaded_file.filename == "":
+        return "Please select a CSV file."
+
+    test_data = pd.read_csv(uploaded_file)
+
+    test_data.fillna(0, inplace=True)
+
+    # Remove label column if it exists
+    if "Label" in test_data.columns:
+        test_data = test_data.drop(columns=["Label"])
+
+    test_data = scaler.transform(test_data)
+
+    predictions = model.predict(test_data)
+
+    results = []
+
+    for prediction in predictions:
+        disease = label_encoder.inverse_transform([int(prediction)])[0]
+        results.append(disease)
+
+    return render_template(
+        "result.html",
+        result=results,
+        accuracy=round(accuracy * 100, 2)
+    )
