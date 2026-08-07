@@ -53,3 +53,39 @@ def home():
         "index.html",
         accuracy=round(accuracy * 100,2)
     )
+    # -----------------------------------------
+# Prediction Route
+# -----------------------------------------
+
+@app.route("/predict", methods=["POST"])
+def predict():
+
+    file = request.files["file"]
+
+    test = pd.read_csv(file)
+
+    test.fillna(0, inplace=True)
+
+    test = test.iloc[:, :-1]
+
+    test = scaler.transform(test)
+
+    prediction = model.predict(test)
+
+    result = []
+
+    for i in prediction:
+        result.append(label_encoder.inverse_transform([int(i)])[0])
+
+    return render_template(
+        "result.html",
+        result=result
+    )
+
+
+# -----------------------------------------
+# Run Flask
+# -----------------------------------------
+
+if __name__ == "__main__":
+    app.run(debug=True)
