@@ -2,7 +2,7 @@ print("Step 1")
 from flask import Flask, render_template, request
 from flask import Flask, render_template, request
 import pandas as pd
-import numpy as np
+import numpy as n
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
