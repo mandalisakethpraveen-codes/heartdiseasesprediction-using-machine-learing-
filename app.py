@@ -96,6 +96,10 @@ def predict():
         result=results,
         accuracy=round(accuracy * 100, 2)
     )
+    
+print("Reached Flask startup")
+
+
     # -----------------------------
 # Run Flask
 # ==========================
