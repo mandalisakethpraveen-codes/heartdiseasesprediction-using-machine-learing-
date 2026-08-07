@@ -1,1 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Result</title>
+</head>
+<body>
 
+<h1>Heart Disease Prediction Result</h1>
+
+{% for disease in result %}
+
+<p><b>Predicted Disease:</b> {{ disease }}</p>
+
+{% endfor %}
+
+<br>
+
+<a href="/">Predict Another File</a>
+
+</body>
+</html>
