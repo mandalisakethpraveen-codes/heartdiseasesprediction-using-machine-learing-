@@ -5,14 +5,13 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import accuracy_score
-
 from xgboost import XGBClassifier
 
 app = Flask(__name__)
 
-# -----------------------------
-# Train Model
-# -----------------------------
+# ==========================
+# Load Dataset
+# ==========================
 
 dataset = pd.read_csv("HeartData.csv")
 
@@ -22,19 +21,26 @@ dataset["Label"] = label_encoder.fit_transform(dataset["Label"])
 dataset.fillna(0, inplace=True)
 
 X = dataset.iloc[:, :-1]
-Y = dataset.iloc[:, -1]
+y = dataset.iloc[:, -1]
 
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X,
-    Y,
+    y,
     test_size=0.20,
     random_state=42
 )
 
-model = XGBClassifier()
+# ==========================
+# Train Model
+# ==========================
+
+model = XGBClassifier(
+    use_label_encoder=False,
+    eval_metric="mlogloss"
+)
 
 model.fit(X_train, y_train)
 
@@ -43,49 +49,13 @@ accuracy = accuracy_score(
     model.predict(X_test)
 )
 
-# -----------------------------
+# ==========================
 # Home Page
-# -----------------------------
+# ==========================
 
 @app.route("/")
 def home():
     return render_template(
         "index.html",
-        accuracy=round(accuracy * 100,2)
+        accuracy=round(accuracy * 100, 2)
     )
-    # -----------------------------------------
-# Prediction Route
-# -----------------------------------------
-
-@app.route("/predict", methods=["POST"])
-def predict():
-
-    file = request.files["file"]
-
-    test = pd.read_csv(file)
-
-    test.fillna(0, inplace=True)
-
-    test = test.iloc[:, :-1]
-
-    test = scaler.transform(test)
-
-    prediction = model.predict(test)
-
-    result = []
-
-    for i in prediction:
-        result.append(label_encoder.inverse_transform([int(i)])[0])
-
-    return render_template(
-        "result.html",
-        result=result
-    )
-
-
-# -----------------------------------------
-# Run Flask
-# -----------------------------------------
-
-if __name__ == "__main__":
-    app.run(debug=True)
