@@ -96,3 +96,9 @@ def predict():
         result=results,
         accuracy=round(accuracy * 100, 2)
     )
+    # -----------------------------
+# Run Flask
+# -----------------------------
+
+if __name__ == "__main__":
+    app.run(debug=True)
